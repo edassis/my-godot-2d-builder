@@ -1,0 +1,59 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Shared/Components/PowerSource.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Shared/Components/PowerReceiver.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Shared/tileset.svg" type="Texture" id=3]
+[ext_resource path="res://Entities/Entities/BatteryEntity.gd" type="Script" id=4]
+[ext_resource path="res://Shared/battery_indicator.png" type="Texture" id=5]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform float amount : hint_range(0, 1) = 0.0;
+
+void fragment() {
+  vec4 mask = texture(TEXTURE, UV);
+  float masking_area = mask.r;
+    
+  float uv_percentage = step(UV.x, amount);
+    
+  COLOR = vec4(MODULATE.rgb, uv_percentage * masking_area);
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/amount = 1.0
+
+[node name="BatteryEntity" type="StaticBody2D" groups=[
+"power_receivers",
+"power_sources",
+]]
+script = ExtResource( 4 )
+
+[node name="PowerSource" parent="." instance=ExtResource( 1 )]
+power_amount = 200.0
+output_direction = 4
+
+[node name="PowerReceiver" parent="." instance=ExtResource( 2 )]
+power_required = 200.0
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 0, -5 )
+texture = ExtResource( 3 )
+region_enabled = true
+region_rect = Rect2( 340, 120, 100, 100 )
+
+[node name="Indicator" type="Sprite" parent="."]
+modulate = Color( 1, 0, 0, 1 )
+material = SubResource( 2 )
+position = Vector2( -23.4609, -17.4284 )
+scale = Vector2( 0.591309, 0.542317 )
+texture = ExtResource( 5 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( 0, -5 )
+polygon = PoolVector2Array( 0, 30, -49, 5, -49, -8, 0, -32, 49, -8, 49, 5 )
+
+[connection signal="power_updated" from="PowerSource" to="." method="_on_PowerSource_power_updated"]
+[connection signal="received_power" from="PowerReceiver" to="." method="_on_PowerReceiver_received_power"]

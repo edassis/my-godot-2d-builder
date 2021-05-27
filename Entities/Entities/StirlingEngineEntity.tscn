@@ -1,0 +1,81 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Entities/Entities/StirlingEngineEntity.gd" type="Script" id=1]
+[ext_resource path="res://Shared/tileset.svg" type="Texture" id=2]
+[ext_resource path="res://Shared/Components/PowerSource.tscn" type="PackedScene" id=3]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Work"
+length = 0.6
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("PistonFront:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -3 ), Vector2( 0, -31 ), Vector2( 0, -3 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("PistonBack:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -33 ), Vector2( 0, -61 ), Vector2( 0, -33 ) ]
+}
+
+[node name="StirlingEngineEntity" type="StaticBody2D" groups=[
+"power_sources",
+]]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="EngineBase" type="Sprite" parent="."]
+position = Vector2( 0, -5 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 449, 149, 102, 62 )
+
+[node name="PistonBack" type="Sprite" parent="."]
+position = Vector2( 0, -56.0437 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 780, 139, 100, 27 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="PistonShaft" type="Sprite" parent="."]
+position = Vector2( 0, -31 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 584, 119, 52, 70 )
+
+[node name="PistonFront" type="Sprite" parent="."]
+position = Vector2( 0, -26.0437 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 669, 164, 102, 37 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( 0, -5 )
+polygon = PoolVector2Array( -50, -6, -50, 5, -0.470535, 29.681, 49, 5, 49, -6, 0, -30 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Work = SubResource( 1 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="PowerSource" parent="." instance=ExtResource( 3 )]
+power_amount = 25.0
