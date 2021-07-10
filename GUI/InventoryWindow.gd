@@ -21,19 +21,20 @@ func setup(_gui: Control) -> void:
 	for bar in inventories:
 		bar.setup(gui)
 
-	var engine: BlueprintEntity = Library.blueprints.StirlingEngine.instance()
-	engine.stack_count = 4
-	var battery: BlueprintEntity = Library.blueprints.Battery.instance()
-	battery.stack_count = 4
-	inventories[0].panels[0].held_item = engine
-	inventories[0].panels[1].held_item = battery
-
 
 ## Removes the provided quickbar from its current parent and makes it a sibling
 ## of the other inventory bars.
 func claim_quickbar(quickbar: Control) -> void:
 	quickbar.get_parent().remove_child(quickbar)
 	inventory_path.add_child(quickbar)
+
+
+func add_to_first_available_inventory(item: BlueprintEntity) -> bool:
+	for inventory in inventories:
+		if inventory.add_to_first_available_inventory(item):
+			return true
+
+	return false
 
 
 ## Whenever we receive the `inventory_changed` signal, bubble up the signal from the inventory bars.

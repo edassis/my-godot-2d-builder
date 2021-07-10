@@ -10,3 +10,4 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 InventoryPanelScene = ExtResource( 2 )
+slot_count = null

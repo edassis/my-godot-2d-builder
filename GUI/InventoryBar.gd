@@ -31,6 +31,14 @@ func setup(gui: Control) -> void:
 		panel.connect("held_item_changed", self, "_on_Panel_held_item_changed")
 
 
+func add_to_first_available_inventory(item: BlueprintEntity) -> bool:
+	for inventory in inventories:
+		if inventory.add_to_first_available_inventory(item):
+			return true
+
+	return false
+
+
 ## Creates several inventory panel instances as a child of this horizontal bar.
 ## Adds them to the `panels` object variable.
 func _make_panels() -> void:

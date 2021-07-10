@@ -15,6 +15,10 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+debug_items = {
+"Battery": 4,
+"StirlingEngine": 4
+}
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 margin_left = 640.0
@@ -43,3 +47,4 @@ margin_top = 600.0
 margin_right = 0.0
 margin_bottom = 600.0
 custom_constants/separation = 10
+slot_count = null

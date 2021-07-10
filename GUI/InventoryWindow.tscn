@@ -48,7 +48,3 @@ margin_bottom = 10.0
 [node name="Inventory3" parent="PanelContainer/MarginContainer/Inventories" instance=ExtResource( 2 )]
 margin_top = 20.0
 margin_bottom = 20.0
-
-[connection signal="inventory_changed" from="PanelContainer/MarginContainer/Inventories/Inventory1" to="." method="_on_InventoryBar_inventory_changed"]
-[connection signal="inventory_changed" from="PanelContainer/MarginContainer/Inventories/Inventory2" to="." method="_on_InventoryBar_inventory_changed"]
-[connection signal="inventory_changed" from="PanelContainer/MarginContainer/Inventories/Inventory3" to="." method="_on_InventoryBar_inventory_changed"]

@@ -17,3 +17,11 @@ func _make_panels() -> void:
 		# Here's where we set the shortcut number on the label.
 		var index := wrapi(i + 1, 0, 10)
 		panel.get_node("Label").text = str(index)
+
+
+func add_to_first_available_inventory(item: BlueprintEntity) -> bool:
+	for inventory in inventories:
+		if inventory.add_to_first_available_inventory(item):
+			return true
+
+	return false
