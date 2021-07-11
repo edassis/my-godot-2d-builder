@@ -67,6 +67,7 @@ func _simulate_input(panel: InventoryPanel) -> void:
 	panel._gui_input(input)
 
 
+# warning-ignore:unused_argument
 func _process(delta: float) -> void:
 	var mouse_position := get_global_mouse_position()
 	# if the mouse is inside the GUI rect and the GUI is open, set it true.
@@ -95,6 +96,9 @@ func _claim_quickbar() -> void:
 
 
 func _ready() -> void:
+	# Player can pick up an item from the floor.
+	Events.connect("entered_pickup_area", self, "_on_entered_pickup_area")
+
 	# Here, we'll set up any GUI systems that require knowledge of the GUI node.
 	# We'll define `InventoryWindow.setup()` in the next lesson.
 	player_inventory.setup(self)
@@ -145,3 +149,10 @@ func _set_blueprint(value: BlueprintEntity) -> void:
 ## Getter that returns the DragPreview's blueprint.
 func _get_blueprint() -> BlueprintEntity:
 	return _drag_preview.blueprint
+
+
+# Player's signal warning that he can pickup up an item.
+func _on_entered_pickup_area(entity, player):
+	if entity is GroundItem:
+		add_to_inventory(entity.blueprint)
+		entity.do_pickup(player)

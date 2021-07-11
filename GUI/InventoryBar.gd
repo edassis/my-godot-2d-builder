@@ -32,10 +32,21 @@ func setup(gui: Control) -> void:
 
 
 func add_to_first_available_inventory(item: BlueprintEntity) -> bool:
-	for inventory in inventories:
-		if inventory.add_to_first_available_inventory(item):
+	var item_name = Library.get_entity_name_from(item)
+	# Here we stop as soon as the first item is inserted.
+	for panel in panels:
+		if not panel.held_item:
+			panel.held_item = item
 			return true
+		else:
+			var panel_item_name = Library.get_entity_name_from(panel.held_item)
+			var stack_has_space: bool =\
+					(panel.held_item.stack_size - panel.held_item.stack_count) >= item.stack_count
 
+			if panel_item_name == item_name and stack_has_space:
+				panel.held_item.stack_count += item.stack_count
+				panel._update_label()
+				return true
 	return false
 
 
