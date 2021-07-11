@@ -6,7 +6,8 @@
 [node name="StoneBlueprint" type="Node2D"]
 script = ExtResource( 2 )
 placeable = false
-stack_size = 8
+stack_size = 4
+salvagable_qtd = 2
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )

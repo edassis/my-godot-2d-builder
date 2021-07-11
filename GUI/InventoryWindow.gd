@@ -29,12 +29,24 @@ func claim_quickbar(quickbar: Control) -> void:
 	inventory_path.add_child(quickbar)
 
 
+## Adds the provided item to the first available spaces it can find in the
+## inventory bars. Returns true if it succeeds.
 func add_to_first_available_inventory(item: BlueprintEntity) -> bool:
 	for inventory in inventories:
 		if inventory.add_to_first_available_inventory(item):
 			return true
 
 	return false
+
+
+## Returns an array of inventory panels that have a held item with a name matching
+## the item id from the inventory bars.
+func find_panels_with(item_id: String) -> Array:
+	var output := []
+	for inventory in inventories:
+		output += inventory.find_panels_with(item_id)
+
+	return output
 
 
 ## Whenever we receive the `inventory_changed` signal, bubble up the signal from the inventory bars.

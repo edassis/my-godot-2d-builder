@@ -8,6 +8,10 @@ export var placeable := true
 ## How many items can be in a stack of the given blueprint type.
 export var stack_size := 1
 
+# Improvement: Use this instead of stack_count to define the quantity of salvagable
+# items.
+export var salvagable_qtd := 1
+
 ## How many items are actually in the stack of the current stack.
 var stack_count := 1
 

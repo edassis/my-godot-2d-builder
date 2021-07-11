@@ -97,7 +97,7 @@ func _claim_quickbar() -> void:
 
 func _ready() -> void:
 	# Player can pick up an item from the floor.
-	Events.connect("entered_pickup_area", self, "_on_entered_pickup_area")
+	Events.connect("entered_pickup_area", self, "_on_Player_entered_pickup_area")
 
 	# Here, we'll set up any GUI systems that require knowledge of the GUI node.
 	# We'll define `InventoryWindow.setup()` in the next lesson.
@@ -119,7 +119,11 @@ func _ready() -> void:
 			item_instance.queue_free()
 
 
+## Tries to add the blueprint to the inventory, starting with existing item
+## stacks and then to an empty panel in the quickbar, then in the main inventory.
+## Returns true if it succeeds.
 func add_to_inventory(item: BlueprintEntity) -> bool:
+	# If the item is already in the scene tree, remove it first.
 	if item.get_parent() != null:
 		item.get_parent().remove_child(item)
 
@@ -127,6 +131,17 @@ func add_to_inventory(item: BlueprintEntity) -> bool:
 		return true
 
 	return player_inventory.add_to_first_available_inventory(item)
+
+
+## Returns an array of inventory panels containing a held item that has a name
+## that matches the provided item id from the player inventory and quick-bar.
+func find_panels_with(item_id: String) -> Array:
+	var existing_stacks: Array = (
+		quickbar.find_panels_with(item_id)
+		+ player_inventory.find_panels_with(item_id)
+	)
+
+	return existing_stacks
 
 
 ## Forwards the `destroy_blueprint()` call to the drag preview.
@@ -151,8 +166,35 @@ func _get_blueprint() -> BlueprintEntity:
 	return _drag_preview.blueprint
 
 
-# Player's signal warning that he can pickup up an item.
-func _on_entered_pickup_area(entity, player):
-	if entity is GroundItem:
-		add_to_inventory(entity.blueprint)
-		entity.do_pickup(player)
+## Tries to add the ground item detected by the player collision into the player's
+## inventory and trigger the animation for it.
+func _on_Player_entered_pickup_area(item: GroundItem, player: KinematicBody2D) -> void:
+	if not (item and item.blueprint):
+		return
+
+	# We get the current amount inside the stack. It's possible for there to be
+	# no space for the entire stack, but we could still pick up parts of the stack.
+	var amount := item.blueprint.stack_count
+
+	# Attempts to add the item to existing stacks and available space.
+	if add_to_inventory(item.blueprint):
+		# If we succeed, we play the `do_pickup()` animation, disable collision, etc.
+		item.do_pickup(player)
+	else:
+		# If the attempt failed, we calculate if the stack is smaller than it
+		# used to be before we tried picking it up.
+		if item.blueprint.stack_count < amount:
+			# If so, we need to create a new duplicate ground item whose job is to animate
+			# itself flying to the player.
+			var new_item := item.duplicate()
+
+			# We need to use `call_deferred` to delay the new item by a frame because
+			# we disable the shape's collision so it can't be picked up twice.
+			#
+			# As the physics engine is currently busy dealing with the collision
+			# with the player's area and Godot doesn't allow us to change
+			# collision states when its physics engine is busy, we need to wait
+			# so it won't complain or cause errors.
+			item.get_parent().call_deferred("add_child", new_item)
+			new_item.call_deferred("setup", item.blueprint)
+			new_item.call_deferred("do_pickup", player)
