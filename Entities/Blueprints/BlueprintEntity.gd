@@ -12,6 +12,10 @@ export var stack_size := 1
 # items.
 export var salvagable_qtd := 1
 
+## Provides a field for information about the blueprint item. What it is and what
+## it is used for.
+export(String, MULTILINE) var description := ""
+
 ## How many items are actually in the stack of the current stack.
 var stack_count := 1
 

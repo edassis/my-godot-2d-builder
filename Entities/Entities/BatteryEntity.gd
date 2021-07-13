@@ -19,6 +19,14 @@ func _setup(blueprint: BlueprintEntity) -> void:
 	receiver.input_direction = 15 ^ source.output_direction
 
 
+## Provides the amount of power relative to the max amount of power.
+func get_info() -> String:
+	# Uses Godot's string formatting syntax to pad four characters to the right,
+	# and display one decimal number.
+	# The "j" below stands for joules, an internal unit to measure energy.
+	return "Storing %-4.1f/%s j" % [stored_power, max_storage]
+
+
 func _set_stored_power(value: float) -> void:
 	stored_power = max(value, 0)
 
@@ -36,7 +44,8 @@ func _set_stored_power(value: float) -> void:
 
 func _on_PowerReceiver_received_power(amount: float, delta: float) -> void:
 	self.stored_power = stored_power + amount * delta
-
+	Events.emit_signal("info_updated", self)
 
 func _on_PowerSource_power_updated(power_draw: float, delta: float) -> void:
 	self.stored_power = stored_power - min(power_draw, source.get_effective_power()) * delta
+	Events.emit_signal("info_updated", self)

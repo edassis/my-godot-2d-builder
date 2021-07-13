@@ -20,5 +20,16 @@ func _ready() -> void:
 	tween.interpolate_property(animation_player, "playback_speed", 0, 1, BOOTUP_TIME)
 	# We also animate the color of the `shaft` to enhance the animation, going from white to green.
 	tween.interpolate_property(shaft, "modulate", Color.white, Color(0.5, 1, 0.5), BOOTUP_TIME)
-	tween.interpolate_property(power, "efficiency", 0, 1, BOOTUP_TIME)
+	tween.interpolate_method(self, "_update_efficiency", 0.0, 1.0, BOOTUP_TIME)
 	tween.start()
+
+
+## Provides the current amount of power being output by the engine.
+func get_info() -> String:
+	# We format the power as a number with one decimal.
+	return "%.1f j/s" % power.get_effective_power()
+
+
+func _update_efficiency(value: float) -> void:
+	power.efficiency = value
+	Events.emit_signal("info_updated", self)

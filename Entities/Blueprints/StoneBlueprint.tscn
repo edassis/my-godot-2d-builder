@@ -8,6 +8,7 @@ script = ExtResource( 2 )
 placeable = false
 stack_size = 4
 salvagable_qtd = 2
+description = "Small rock."
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )

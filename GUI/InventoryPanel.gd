@@ -73,71 +73,45 @@ func _update_label() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
-	# We need to check for left and right click actions below.
-	# To help with code readability, I create two variables with short descriptive names.
 	var left_click := event.is_action_pressed("left_click")
 	var right_click := event.is_action_pressed("right_click")
 
-	if not (left_click or right_click):
-		return
+	if left_click or right_click:
+		if gui.blueprint:
+			var blueprint_name := Library.get_entity_name_from(gui.blueprint)
+			if held_item:
+				var held_item_name := Library.get_entity_name_from(held_item)
 
-	# We have three main cases to handle below:
-	#
-	# 1. The mouse is holding an item and the inventory slot has an item.
-	# 2. The mouse is holding an item and the inventory slot is empty.
-	# 3. The mouse is not holding an item and the inventory has one.
+				var item_is_same_type: bool = held_item_name == blueprint_name
+				var stack_has_space: bool = held_item.stack_count < held_item.stack_size
 
-	# If the player clicked on the panel and the mouse is holding an item.
-	if gui.blueprint:
-		# We first get the held item's name to compare it to the slot's item.
-		# We'll use it to stack items if they're of the same type.
-		var blueprint_name := Library.get_entity_name_from(gui.blueprint)
-
-		# The `held_item` variable tells us if this inventory panel contains an item.
-		if is_instance_valid(held_item):
-			# If so, we get its name and compare it to the mouse's `blueprint_name`.
-			var held_item_name := Library.get_entity_name_from(held_item)
-			var item_is_same_type: bool = held_item_name == blueprint_name
-
-			# We then check if this panel's held item stack isn't full.
-			var stack_has_space: bool = held_item.stack_count < held_item.stack_size
-			if item_is_same_type and stack_has_space:
-				# If the player left-clicked, we merge the mouse's entire stack with this one.
-				if left_click:
-					_stack_items()
-				# With a right-click, we merge half of the mouse's stack with this one.
-				elif right_click:
-					_stack_items(true)
-			# If the items are not the same name or there is no space, we swap the two items,
-			# putting the panel's in the mouse and the mouse's in the panel.
-			else:
-				if left_click:
-					_swap_items()
-		# If this inventory slot is empty,
-		else:
-			# if the player left-clicks on the slot, we put the item in the slot (the
-			# inventory panel grabs the item from the mouse's inventory).
-			if left_click:
-				_grab_item()
-
-			# if the player right-clicks, we either put half the mouse's stack in the slot
-			# or put the mouse's item in the slot if it can't stack.
-			elif right_click:
-				if gui.blueprint.stack_count > 1:
-					_grab_split_items()
+				if item_is_same_type and stack_has_space:
+					if left_click:
+						_stack_items()
+					elif right_click:
+						_stack_items(true)
 				else:
-					_grab_item()
-	# If the mouse isn't holding any item but there is an item in the slot.
-	elif is_instance_valid(held_item):
-		# On left-click, we put the slot's item in the mouse's inventory.
-		if left_click:
-			_release_item()
-		# On right-click, we either put the item in the mouse's inventory or split the stack.
-		elif right_click:
-			if held_item.stack_count == 1:
-				_release_item()
+					if left_click:
+						_swap_items()
 			else:
-				_split_items()
+				if left_click:
+					_grab_item()
+				elif right_click:
+					if gui.blueprint.stack_count > 1:
+						_grab_split_items()
+					else:
+						_grab_item()
+		elif held_item:
+			if left_click:
+				_release_item()
+			elif right_click:
+				if held_item.stack_count == 1:
+					_release_item()
+				else:
+					_split_items()
+
+	elif event is InputEventMouseMotion and is_instance_valid(held_item):
+		Events.emit_signal("hovered_over_entity", held_item)
 
 
 ## Gets an item from the mouse and stores it in the `held_item` variable.
@@ -241,3 +215,19 @@ func _grab_split_items() -> void:
 	gui.update_label()
 
 	self.held_item = new_stack
+
+
+#func _update_hover():
+#
+#
+### Marks the `cellv`'s entity as hovered and emits the `hovered_over_entity`
+### signal.
+#func _hover_entity(cellv: Vector2) -> void:
+#	var entity: Node2D = _tracker.get_entity_at(cellv)
+#	Events.emit_signal("hovered_over_entity", entity)
+#
+#
+### Clears any hovered entity and signals the tooltip that we have nothing
+### under the mouse.
+#func _clear_hover_entity(cellv: Vector2) -> void:
+#	Events.emit_signal("hovered_over_entity", null)
