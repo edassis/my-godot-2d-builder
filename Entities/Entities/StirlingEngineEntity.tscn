@@ -33,9 +33,7 @@ tracks/1/keys = {
 "values": [ Vector2( 0, -33 ), Vector2( 0, -61 ), Vector2( 0, -33 ) ]
 }
 
-[node name="StirlingEngineEntity" type="StaticBody2D" groups=[
-"power_sources",
-]]
+[node name="StirlingEngineEntity" type="StaticBody2D" groups=["power_sources"]]
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true

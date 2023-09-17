@@ -12,7 +12,7 @@ description = "Stores energy."
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 region_enabled = true
-region_rect = Rect2( 340, 120, 100, 100 )
+region_rect = Rect2( 339, 119, 102, 82 )
 
 [node name="PowerDirection" parent="." instance=ExtResource( 1 )]
 output_directions = 4

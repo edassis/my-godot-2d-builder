@@ -25,10 +25,7 @@ resource_local_to_scene = true
 shader = SubResource( 1 )
 shader_param/amount = 1.0
 
-[node name="BatteryEntity" type="StaticBody2D" groups=[
-"power_receivers",
-"power_sources",
-]]
+[node name="BatteryEntity" type="StaticBody2D" groups=["power_receivers", "power_sources"]]
 script = ExtResource( 4 )
 
 [node name="PowerSource" parent="." instance=ExtResource( 1 )]
