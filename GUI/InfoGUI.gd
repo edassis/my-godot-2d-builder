@@ -21,6 +21,7 @@ func _ready() -> void:
 	# Connect to the events we added to the event bus.
 	Events.connect("hovered_over_entity", self, "_on_hovered_over_entity")
 	Events.connect("info_updated", self, "_on_info_updated")
+	Events.connect("hovered_over_recipe", self, "_on_hovered_over_recipe")
 	# Make sure that the tooltip is out of the way when the game first starts.
 	hide()
 
@@ -87,3 +88,27 @@ func _on_info_updated(entity: Node) -> void:
 		_set_info(current_entity)
 		# Force-reset the size of the container around the label.
 		set_deferred("rect_size", Vector2.ZERO)
+
+## Displays the provided item and recipe in the information label
+func _on_hovered_over_recipe(output: String, recipe: Dictionary) -> void:
+	# We need to get access to the blueprint's `description` property in `_set_info()`,
+	# so we must temporarily instance a new version of the blueprint.
+	var blueprint: BlueprintEntity = Library.blueprints[output].instance()
+	_set_info(blueprint)
+
+	# Once we're done with it, we can get rid of it and free the memory we spent.
+	blueprint.free()
+
+	# Update the name to show how many items will be crafted in one go
+	label.text = "%sx %s" % [recipe.amount, label.text]
+
+	# For each input item in the recipe, add it on its own line with the amount
+	# needed.
+	var inputs: Dictionary = recipe.inputs
+	for input in inputs.keys():
+		# We add a few spaces to make it prettier, and use the `capitalize()`
+		# function to make sure any compound names are spaced out
+		label.text += "\n    %sx %s" % [inputs[input], input.capitalize()]
+
+	# Force-reset the size of the container around the label
+	set_deferred("rect_size", Vector2.ZERO)

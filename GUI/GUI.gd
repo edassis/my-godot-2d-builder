@@ -36,7 +36,7 @@ onready var _gui_rect := $HBoxContainer
 onready var quickbar := $MarginContainer/QuickBar
 # We'll use it later to reparent the `quickbar` node.
 onready var quickbar_container := $MarginContainer
-
+onready var crafting_window := $HBoxContainer/CraftingGUI
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_inventory"):
@@ -79,6 +79,8 @@ func _open_inventories() -> void:
 	_is_open = true
 	player_inventory.visible = true
 	player_inventory.claim_quickbar(quickbar)
+	crafting_window.visible = true
+	crafting_window.update_recipes()
 
 
 ## Hides the inventory window, crafting window, and any currently open machine GUI
@@ -86,6 +88,7 @@ func _close_inventories() -> void:
 	_is_open = false
 	player_inventory.visible = false
 	_claim_quickbar()
+	crafting_window.visible = false
 
 
 ## Removes the quickbar from its current parent and puts it back under the
@@ -103,6 +106,7 @@ func _ready() -> void:
 	# We'll define `InventoryWindow.setup()` in the next lesson.
 	player_inventory.setup(self)
 	quickbar.setup(self)
+	crafting_window.setup(self)
 
 	# ----- Debug system -----
 	# We loop over all the keys in the `debug_items` dictionary and ensure they exist in the `Library`.
@@ -143,6 +147,20 @@ func find_panels_with(item_id: String) -> Array:
 
 	return existing_stacks
 
+## Checks the player's inventory and compares the total count of items with
+## a given `item_id`.
+## Returns `true` if it's equal or greater than the specified `amount`.
+func is_in_inventory(item_id: String, amount: int) -> bool:
+	# Get all panels that have the given item by name.
+	var existing_stacks := find_panels_with(item_id)
+	if existing_stacks.empty():
+		return false
+
+	# If we have them, iterate over each one and total them up.
+	var total := 0
+	for stack in existing_stacks:
+		total += stack.held_item.stack_count
+	return total >= amount
 
 ## Forwards the `destroy_blueprint()` call to the drag preview.
 func destroy_blueprint() -> void:

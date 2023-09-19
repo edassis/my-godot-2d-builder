@@ -19,3 +19,6 @@ signal hovered_over_entity(entity)
 
 ## Emitted when an entity updates its tooltip.
 signal info_updated(entity)
+
+## Emitted when the mouse hovers a recipe item.
+signal hovered_over_recipe(output, recipe)

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Shared/Theme/builder_theme.tres" type="Theme" id=1]
+[ext_resource path="res://GUI/Crafting/CraftingGUI.gd" type="Script" id=2]
 
 [node name="CraftingGUI" type="MarginContainer"]
 margin_right = 40.0
@@ -11,6 +12,7 @@ custom_constants/margin_right = 25
 custom_constants/margin_top = 25
 custom_constants/margin_left = 25
 custom_constants/margin_bottom = 25
+script = ExtResource( 2 )
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 margin_left = 25.0
